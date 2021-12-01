@@ -1,0 +1,16 @@
+{
+  "name": "aoc2021",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "scaffold": "node bin/scaffold.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "lodash": "^4.17.20",
+    "lodash.product": "^18.9.19",
+    "moment": "^2.29.1"
+  }
+}
