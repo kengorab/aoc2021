@@ -1,0 +1,56 @@
+import readFile from io
+
+enum Direction {
+  Forward
+  Up
+  Down
+}
+
+func parseMoves(): (Direction, Int)[] = if readFile("./input.txt") |input| {
+  input.trim().lines().map(l => {
+    val parts = l.split(" ")
+    val dir = match parts[0] {
+      "forward" => Direction.Forward
+      "up" => Direction.Up
+      "down" => Direction.Down
+      _ => return []
+    }
+    val amt = parts[1]?.parseInt() ?: 0
+    (dir, amt)
+  })
+} else []
+val moves = parseMoves()
+
+// Part 1
+(() => {
+  var x = 0
+  var z = 0
+
+  for (dir, amt) in moves {
+    match dir {
+      Direction.Forward => x += amt
+      Direction.Up => z -= amt
+      Direction.Down => z += amt
+    }
+  }
+  println(x * z)
+})() // 1648020
+
+// Part 2
+(() => {
+  var x = 0
+  var z = 0
+  var aim = 0
+
+  for (dir, amt) in moves {
+    match dir {
+      Direction.Forward => {
+        x += amt
+        z += aim * amt
+      }
+      Direction.Up => aim -= amt
+      Direction.Down => aim += amt
+    }
+  }
+  println(x * z)
+})() // 1759818555
