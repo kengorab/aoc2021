@@ -4,16 +4,23 @@ enum Direction {
   Forward
   Up
   Down
+
+  func fromString(s: String, caseSensitive = false): Result<Direction, String> {
+    match s {
+      "forward" => Result.Ok(Direction.Forward)
+      "up" => Result.Ok(Direction.Up)
+      "down" => Result.Ok(Direction.Down)
+      _ => Result.Err(s)
+    }
+  }
 }
 
 func parseMoves(): (Direction, Int)[] = if readFile("./input.txt") |input| {
   input.trim().lines().map(l => {
     val parts = l.split(" ")
-    val dir = match parts[0] {
-      "forward" => Direction.Forward
-      "up" => Direction.Up
-      "down" => Direction.Down
-      _ => return []
+    val dir = match Direction.fromString(parts[0] ?: "") {
+      Result.Ok(dir) => dir
+      Result.Err => return []
     }
     val amt = parts[1]?.parseInt() ?: 0
     (dir, amt)
