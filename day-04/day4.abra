@@ -1,0 +1,81 @@
+import readFile from io
+
+func parseInput(): (Int[], Int[][][]) {
+  val [first, *rest] = if readFile("./input.txt") |input| input.trim().lines() else []
+  val numbers = if first |nums| {
+    nums.split(",").map(n => n.parseInt() ?: 0)
+  } else []
+
+  val boards: Int[][][] = []
+  var board: Int[][] = []
+  for line in rest {
+    if line.length == 0 {
+      if !board.isEmpty() {
+        boards.push(board)
+        board = []
+      }
+      continue
+    }
+
+    val boardLine = line.split(" ").filter(i => i.trim().length != 0).map(i => i.parseInt() ?: 0)
+    board.push(boardLine)
+  }
+
+  (numbers, boards)
+}
+
+func isBingo(board: Int[][], called: Set<Int>): Bool {
+  for row, i in board {
+    if row.all(n => called.contains(n)) return true
+
+    val col = board.map(row => row[i] ?: 0)
+    if col.all(n => called.contains(n)) return true
+  }
+  false
+}
+
+func score(board: Int[][], called: Set<Int>): Int {
+  var sum = 0
+  for row in board {
+    for n in row {
+      if !called.contains(n) sum += n
+    }
+  }
+  sum
+}
+
+val (nums, boards) = parseInput()
+
+func part1() {
+  val called: Set<Int> = #{}
+
+  for num in nums {
+    called.insert(num)
+    for board in boards {
+      if isBingo(board, called) {
+        println("Part 1:", score(board, called) * num)
+        return
+      }
+    }
+  }
+}
+part1() // 27027
+
+func part2() {
+  val boards = boards.asSet()
+  val called: Set<Int> = #{}
+
+  for num in nums {
+    called.insert(num)
+    for board in boards {
+      if isBingo(board, called) {
+        if boards.size == 1 {
+          println("Part 2:", score(board, called) * num)
+          return
+        }
+        boards.remove(board)
+      }
+    }
+  }
+}
+part2() // 36975
