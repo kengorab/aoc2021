@@ -1,0 +1,60 @@
+import readFile from io
+
+val input = if readFile("./input.txt") |input| input.trim().lines() else []
+
+func sum(nums: Int[]): Int {
+  var s = 0
+  for n in nums s += n
+  s
+}
+
+// Part 1
+(() => {
+  val N = input.length
+  val len = input[0]?.length ?: 0
+  var gamma = 0
+  var epsilon = 0
+
+  for i in range(0, len) {
+    gamma *= 2
+    epsilon *= 2
+
+    val s = sum(input.map(r => if r[i] == "1" 1 else 0))
+    if s < N/2 epsilon += 1
+    else gamma += 1
+  }
+
+  gamma * epsilon
+})() // 3633500
+
+// Part 2
+(() => {
+  var input1 = input
+  var input2 = input
+  val N = input.length
+  val len = input[0]?.length ?: 0
+
+  for i in range(0, len) {
+    if input1.length > 1 {
+      val s1 = sum(input1.map(r => if r[i] == "1" 1 else 0))
+      if s1 >= input1.length / 2 {
+        input1 = input1.filter(r => r[i] == "1")
+      } else {
+        input1 = input1.filter(r => r[i] == "0")
+      }
+    }
+
+    if input2.length > 1 {
+      val s2 = sum(input2.map(r => if r[i] == "1" 1 else 0))
+      if s2 >= input2.length / 2 {
+        input2 = input2.filter(r => r[i] == "0")
+      } else {
+        input2 = input2.filter(r => r[i] == "1")
+      }
+    }
+  }
+
+  val o2 = (input1[0] ?: "").parseInt(2) ?: 0
+  val co2 = (input2[0] ?: "").parseInt(2) ?: 0
+  o2 * co2
+})() // 4550283

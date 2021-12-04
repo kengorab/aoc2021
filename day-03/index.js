@@ -18,9 +18,7 @@ const demoInput = `
 `
 
 function processInput(input) {
-  return input.trim().split('\n').map(l => {
-    return l.split('').map(i => parseInt(i))
-  })
+  return input.trim().split('\n')
 }
 
 function part1() {
@@ -33,7 +31,7 @@ function part1() {
     gamma = gamma << 1
     epsilon = epsilon << 1
 
-    const s = _.sum(input.map(r => r[i]))
+    const s = _.sum(input.map(r => r[i] === '1' ? 1 : 0))
     if (s < n/2) {
       epsilon += 1
     } else {
@@ -51,27 +49,24 @@ function part2() {
 
   for (let i = 0; i < len; i++) {
     if (input1.length > 1) {
-      const s1 = _.sum(input1.map(r => r[i]))
+      const s1 = _.sum(input1.map(r => r[i] === '1' ? 1 : 0))
       if (s1 >= input1.length / 2) {
-        input1 = input1.filter(r => r[i] === 1)
+        input1 = input1.filter(r => r[i] === '1')
       } else {
-        input1 = input1.filter(r => r[i] === 0)
+        input1 = input1.filter(r => r[i] === '0')
       }
     }
 
     if (input2.length > 1) {
-      const s2 = _.sum(input2.map(r => r[i]))
+      const s2 = _.sum(input2.map(r => r[i] === '1' ? 1 : 0))
       if (s2 >= input2.length / 2) {
-        input2 = input2.filter(r => r[i] === 0)
+        input2 = input2.filter(r => r[i] === '0')
       } else {
-        input2 = input2.filter(r => r[i] === 1)
+        input2 = input2.filter(r => r[i] === '1')
       }
     }
   }
 
-  const o2 = parseInt(input1[0].join(''), 2)
-  const co2 = parseInt(input2[0].join(''), 2)
-
-  return o2 * co2
+  return parseInt(input1[0], 2) * parseInt(input2[0], 2)
 }
 console.log(part2()) // 4550283
