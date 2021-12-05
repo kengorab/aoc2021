@@ -1,0 +1,79 @@
+import readFile from io
+
+func max(a: Int, b: Int): Int = if a >= b a else b
+func min(a: Int, b: Int): Int = if a <= b a else b
+
+type Line {
+  start: (Int, Int)
+  end: (Int, Int)
+
+  func points(self): (Int, Int)[] {
+    val points: (Int, Int)[] = []
+    val (x1, y1) = self.start
+    val (x2, y2) = self.end
+
+    if x1 == x2 {
+      var y = min(y1, y2)
+      while y <= max(y1, y2) {
+        points.push((x1, y))
+        y += 1
+      }
+    } else if y1 == y2 {
+      var x = min(x1, x2)
+      while x <= max(x1, x2) {
+        points.push((x, y1))
+        x += 1
+      }
+    } else {
+      val xinc = if x1 < x2 1 else -1
+      val yinc = if y1 < y2 1 else -1
+      var (x, y) = (x1, y1)
+      while x != x2 && y != y2 {
+        points.push((x, y))
+        x += xinc
+        y += yinc
+      }
+      points.push((x, y))
+    }
+    points
+  }
+}
+
+func parseInput(): Line[] {
+  val lines = if readFile("./input.txt") |input| input.trim().lines() else []
+  lines.map(l => {
+    val [start, end] = l.split(" -> ")
+    val [x1, y1] = start?.split(",")?.map(i => i.parseInt() ?: 0) ?: [0, 0]
+    val [x2, y2] = end?.split(",")?.map(i => i.parseInt() ?: 0) ?: [0, 0]
+    Line(start: (x1 ?: 0, y1 ?: 0), end: (x2 ?: 0, y2 ?: 0))
+  })
+}
+
+val lines = parseInput()
+
+// Part 1
+func part1(): Int {
+  val vertAndHoriz = lines.filter(line => line.start[0] == line.end[0] || line.start[1] == line.end[1])
+  val grid: Map<(Int, Int), Int> = {}
+  for line in vertAndHoriz {
+    for point in line.points() {
+      if !grid.containsKey(point) { grid[point] = 1 }
+      else grid.update(point, x => x + 1)
+    }
+  }
+  grid.values().filter(v => v >= 2).length
+}
+println(part1()) // 7297
+
+// Part 2
+func part2(): Int {
+  val grid: Map<(Int, Int), Int> = {}
+  for line in lines {
+    for point in line.points() {
+      if !grid.containsKey(point) { grid[point] = 1 }
+      else grid.update(point, x => x + 1)
+    }
+  }
+  grid.values().filter(v => v >= 2).length
+}
+println(part2()) // 21038
