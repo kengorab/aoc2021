@@ -10,7 +10,6 @@ function processInput(input) {
   return input.trim().split(',').map(_.parseInt)
 }
 
-
 function part1() {
   const crabs = processInput(realInput)
   const [min, max] = [Math.min.apply(null, crabs), Math.max.apply(null, crabs)]
@@ -59,4 +58,4 @@ function part2() {
 
   return minFuel
 }
-console.log(part2()) // part2: 93214037
+console.log(part2()) // 93214037
