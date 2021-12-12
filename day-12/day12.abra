@@ -1,0 +1,75 @@
+import readFile from io
+
+val input = readFile("./input.txt") ?: ""
+
+type Node {
+  name: String
+  children: String[]
+}
+
+func processInput(input: String): Map<String, Node> {
+  val M: Map<String, Node> = {}
+  for line in input.trim().lines() {
+    val parts = line.split("-")
+    val s = parts[0] ?: ""
+    val e = parts[1] ?: ""
+
+    if M[s] |n| n.children.push(e) else M[s] = Node(name: s, children: [e])
+    if M[e] |n| n.children.push(s) else M[e] = Node(name: e, children: [s])
+  }
+
+  M
+}
+
+func isLowerCase(s: String): Bool = "a" <= s && s <= "z"
+
+func part1(): Int {
+  val M = processInput(input)
+
+  func findPaths(node = "start", path = [node]): String[][] {
+    if node == "end" return [path]
+
+    val paths: String[][] = []
+    for edge in (if M[node] |node| node.children else []) {
+      if isLowerCase(edge) && path.contains(edge) continue
+
+      val pathCopy = path.concat([edge])
+      for path in findPaths(edge, pathCopy) paths.push(path)
+    }
+
+    paths
+  }
+
+  findPaths().length
+}
+println(part1()) // 4411
+
+func part2(): Int {
+  val M = processInput(input)
+
+  func findPaths(allowedDup: String, node = "start", path = [node]): String[][] {
+    if node == "end" return [path]
+
+    val paths: String[][] = []
+    for edge in (if M[node] |node| node.children else []) {
+      val count = path.tally().getOrDefault(edge, 0)
+      if isLowerCase(edge) && count > 0 {
+        if edge == allowedDup && count >= 2 continue
+        if edge != allowedDup && count == 1 continue
+      }
+
+      val pathCopy = path.concat([edge])
+      for path in findPaths(allowedDup, edge, pathCopy) paths.push(path)
+    }
+    paths
+  }
+
+  val paths: Set<String> = #{}
+  val keys = M.keys().filter(k => k != "start" && k != "end" && isLowerCase(k))
+  for key in keys {
+    for path in findPaths(key) paths.insert(path.join(","))
+  }
+
+  paths.size
+}
+println(part2()) // 136767

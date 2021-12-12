@@ -25,7 +25,7 @@ function processInput(input) {
   return G
 }
 
-const isLowerCase = s => 'a' <= s[0] && s[0] <= 'z'
+const isLowerCase = s => 'a' <= s && s <= 'z'
 
 function part1() {
   const G = processInput(realInput)
