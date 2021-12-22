@@ -1,0 +1,72 @@
+val p1Start = 4
+val p2Start = 7
+
+type Die {
+  count: Int = 0
+
+  func roll(self): Int {
+    self.count += 1
+    val v = self.count % 100
+    if v == 0 100 else v
+  }
+}
+
+func part1(): Int {
+  val die = Die()
+
+  var (p1, p2, s1, s2) = (p1Start - 1, p2Start - 1, 0, 0)
+  while true {
+    p1 = (p1 + die.roll() + die.roll() + die.roll()) % 10
+    s1 = (s1 + p1 + 1)
+    if s1 >= 1000 return s2 * die.count
+
+    p2 = (p2 + die.roll() + die.roll() + die.roll()) % 10
+    s2 = (s2 + p2 + 1)
+    if s2 >= 1000 return s1 * die.count
+  }
+  return 0
+}
+println(part1()) // 893700
+
+func rollValues(): Int[] {
+  val res: Int[] = []
+  val N = [1, 2, 3]
+  for a in N {
+    for b in N {
+      for c in N {
+        res.push(a + b + c)
+      }
+    }
+  }
+  res
+}
+
+func part2(): Int {
+  val DP: Map<(Int, Int, Int, Int), (Int, Int)> = {}
+  val rolls = rollValues().tally()
+
+  func play(p1: Int, p2: Int, s1 = 0, s2 = 0): (Int, Int) {
+    if DP[(p1, p2, s1, s2)] |v| return v
+
+    if s1 >= 21 return (1, 0)
+    if s2 >= 21 return (0, 1)
+
+    var (p1Wins, p2Wins) = (0, 0)
+    for value, freq in rolls {
+      val p1New = (p1 + value) % 10
+      val s1New = s1 + p1New + 1
+
+      val (p2w, p1w) = play(p2, p1New, s2, s1New)
+      p1Wins += p1w * freq
+      p2Wins += p2w * freq
+    }
+
+    val res = (p1Wins, p2Wins)
+    DP[(p1, p2, s1, s2)] = res
+    res
+  }
+
+  val (p1, p2) = play(p1Start - 1, p2Start - 1)
+  if p1 > p2 p1 else p2
+}
+println(part2()) // 568867175661958
